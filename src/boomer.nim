@@ -92,7 +92,8 @@ const
 proc update(flashlight: var Flashlight, dt: float32) =
   if abs(flashlight.deltaRadius) > 1.0:
     flashlight.radius = max(0.0, flashlight.radius + flashlight.deltaRadius * dt)
-    flashlight.deltaRadius -= flashlight.deltaRadius * FL_DELTA_RADIUS_DECELERATION * dt
+    flashlight.deltaRadius -= flashlight.deltaRadius *
+        FL_DELTA_RADIUS_DECELERATION * dt
 
   if flashlight.isEnabled:
     flashlight.shadow = min(flashlight.shadow + 6.0 * dt, 0.8)
@@ -106,7 +107,8 @@ proc draw(screenshot: PXImage, camera: Camera, shader, vao, texture: GLuint,
 
   glUseProgram(shader)
 
-  glUniform2f(glGetUniformLocation(shader, "cameraPos".cstring), camera.position[0], camera.position[1])
+  glUniform2f(glGetUniformLocation(shader, "cameraPos".cstring),
+      camera.position[0], camera.position[1])
   glUniform1f(glGetUniformLocation(shader, "cameraScale".cstring), camera.scale)
   glUniform2f(glGetUniformLocation(shader, "screenshotSize".cstring),
               screenshot.width.float32,
@@ -117,8 +119,10 @@ proc draw(screenshot: PXImage, camera: Camera, shader, vao, texture: GLuint,
   glUniform2f(glGetUniformLocation(shader, "cursorPos".cstring),
               mouse.curr.x.float32,
               mouse.curr.y.float32)
-  glUniform1f(glGetUniformLocation(shader, "flShadow".cstring), flashlight.shadow)
-  glUniform1f(glGetUniformLocation(shader, "flRadius".cstring), flashlight.radius)
+  glUniform1f(glGetUniformLocation(shader, "flShadow".cstring),
+      flashlight.shadow)
+  glUniform1f(glGetUniformLocation(shader, "flRadius".cstring),
+      flashlight.radius)
 
   glBindVertexArray(vao)
   glDrawElements(GL_TRIANGLES, count = 6, GL_UNSIGNED_INT, indices = nil)
@@ -168,10 +172,12 @@ proc selectWindow(display: PDisplay): Window =
 
   return root
 
-proc xElevenErrorHandler(display: PDisplay, errorEvent: PXErrorEvent): cint{.cdecl.} =
+proc xElevenErrorHandler(display: PDisplay,
+    errorEvent: PXErrorEvent): cint{.cdecl.} =
   const CAPACITY = 256
   var errorMessage: array[CAPACITY, char]
-  discard XGetErrorText(display, errorEvent.error_code.cint, cast[cstring](addr errorMessage), CAPACITY)
+  discard XGetErrorText(display, errorEvent.error_code.cint, cast[cstring](
+      addr errorMessage), CAPACITY)
   echo "X ELEVEN ERROR: ", $(cast[cstring](addr errorMessage))
 
 proc main() =
@@ -184,7 +190,8 @@ proc main() =
   block:
     proc versionQuit() =
       const hash = gorgeEx("git rev-parse HEAD")
-      quit "boomer-$#" % [if hash.exitCode == 0: hash.output[0 .. 7] else: "unknown"]
+      quit "boomer-$#" % [if hash.exitCode == 0: hash.output[0 ..
+          7] else: "unknown"]
     proc usageQuit() =
       quit """Usage: boomer [OPTIONS]
   -d, --delay <seconds: float>  delay execution of the program by provided <seconds>
@@ -359,13 +366,13 @@ proc main() =
     vao, vbo, ebo: GLuint
     vertices = [
       # Position                 Texture coords
-      [GLfloat    w,     0, 0.0, 1.0, 1.0], # Top right
-      [GLfloat    w,     h, 0.0, 1.0, 0.0], # Bottom right
-      [GLfloat    0,     h, 0.0, 0.0, 0.0], # Bottom left
-      [GLfloat    0,     0, 0.0, 0.0, 1.0]  # Top left
+      [GLfloat w, 0, 0.0, 1.0, 1.0], # Top right
+      [GLfloat w, h, 0.0, 1.0, 0.0], # Bottom right
+      [GLfloat 0, h, 0.0, 0.0, 0.0], # Bottom left
+      [GLfloat 0, 0, 0.0, 0.0, 1.0]  # Top left
     ]
     indices = [GLuint(0), 1, 3,
-                      1,  2, 3]
+                      1, 2, 3]
 
   glGenVertexArrays(1, addr vao)
   glGenBuffers(1, addr vbo)
@@ -390,7 +397,8 @@ proc main() =
   glVertexAttribPointer(0, 3, cGL_FLOAT, false, stride, cast[pointer](0))
   glEnableVertexAttribArray(0)
 
-  glVertexAttribPointer(1, 2, cGL_FLOAT, false, stride, cast[pointer](3 * sizeof(GLfloat)))
+  glVertexAttribPointer(1, 2, cGL_FLOAT, false, stride, cast[pointer](3 *
+      sizeof(GLfloat)))
   glEnableVertexAttribArray(1)
 
   var texture = 0.GLuint
@@ -405,9 +413,9 @@ proc main() =
                screenshot.image.height,
                0,
                # TODO(#13): the texture format is hardcoded
-               GL_BGRA,
-               GL_UNSIGNED_BYTE,
-               screenshot.image.data)
+    GL_BGRA,
+    GL_UNSIGNED_BYTE,
+    screenshot.image.data)
   glGenerateMipmap(GL_TEXTURE_2D)
 
   glUniform1i(glGetUniformLocation(shaderProgram, "tex".cstring), 0)
@@ -562,13 +570,13 @@ proc main() =
         h = screenshot.image.height.float32
         vertices = [
           # Position                 Texture coords
-          [GLfloat    w,     0, 0.0, 1.0, 1.0], # Top right
-          [GLfloat    w,     h, 0.0, 1.0, 0.0], # Bottom right
-          [GLfloat    0,     h, 0.0, 0.0, 0.0], # Bottom left
-          [GLfloat    0,     0, 0.0, 0.0, 1.0]  # Top left
+          [GLfloat w, 0, 0.0, 1.0, 1.0],               # Top right
+          [GLfloat w, h, 0.0, 1.0, 0.0],               # Bottom right
+          [GLfloat 0, h, 0.0, 0.0, 0.0],               # Bottom left
+          [GLfloat 0, 0, 0.0, 0.0, 1.0]                # Top left
         ]
         indices = [GLuint(0), 1, 3,
-                   1,  2, 3]
+                   1, 2, 3]
       glBindBuffer(GL_ARRAY_BUFFER, vbo)
       glBufferData(GL_ARRAY_BUFFER, size = GLsizeiptr(sizeof(vertices)),
                    addr vertices, GL_STATIC_DRAW)
@@ -579,9 +587,9 @@ proc main() =
                    screenshot.image.height,
                    0,
                    # TODO(#13): the texture format is hardcoded
-                   GL_BGRA,
-                   GL_UNSIGNED_BYTE,
-                   screenshot.image.data)
+        GL_BGRA,
+        GL_UNSIGNED_BYTE,
+        screenshot.image.data)
   discard XSetInputFocus(display, originWindow, RevertToParent, CurrentTime);
   discard XSync(display, 0)
 
