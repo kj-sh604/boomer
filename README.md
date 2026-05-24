@@ -20,8 +20,10 @@ $ sudo apt-get install libgl1-mesa-dev libx11-dev libxext-dev libxrandr-dev
 
 ## Quick Start
 
+> (haven't fixed the nim 2.2.10 issues yet, just build with `--legacy` or let's just wait for Tsoding)
+
 ```console
-$ nimble build
+$ nimble build --legacy
 $ ./boomer --help
 $ ./boomer          # to just start using
 ```
@@ -31,7 +33,7 @@ $ ./boomer          # to just start using
 For additional Developer Capabilities compile the application with the following flags:
 
 ```console
-$ nimble build -d:developer
+$ nimble build --legacy -d:developer
 ```
 
 This will enable reloading the shaders with `Ctrl+R`. The shader files (`frag.glsl` and `vert.glsl`) should be located in the same folder as `boomer.nim` for this feature to work. If the shader files not found the program won't even start.
